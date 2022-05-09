@@ -4,8 +4,8 @@ const Controller = require('egg').Controller;
 class ProjectController extends Controller {
 
   async createProject() {
-    const {params, model, service} = this.ctx;
-    const {pageConfig} = params;
+    const { params, model, service } = this.ctx;
+    const { pageConfig } = params;
     const {
       gitName: name,
       templateName,
@@ -17,18 +17,18 @@ class ProjectController extends Controller {
     // todo 重要： 本地环境记得注释回回来！！！
     // 创建项目
     // github 上创建项目
-    // const result = await service.project.createProject({
-    //   ...pageConfig.config,
-    //   name,
-    //   data: pageConfig,
-    //   templateConfig: {
-    //     templateName,
-    //     git: templateGit,
-    //   }
-    // });
+    const result = await service.project.createProject({
+      ...pageConfig.config,
+      name,
+      data: pageConfig,
+      templateConfig: {
+        templateName,
+        git: templateGit,
+      }
+    });
     // todo 重要：本地环境注释，result为mock结果
-    const result = {}
-
+    // const result = {}
+    console.log('result:', result)
     // 数据库存储项目基础信息
     const project = await model.Project.create({
       templateId,
@@ -37,7 +37,7 @@ class ProjectController extends Controller {
       gitConfig: JSON.stringify(result),
       version,
     });
-
+    console.log('project:', project)
     this.ctx.body = {
       success: true,
       result: project,
@@ -73,7 +73,7 @@ class ProjectController extends Controller {
     const where = {
       id,
     };
-    const {dataValues: project} = await this.ctx.model.Project.findOne({
+    const { dataValues: project } = await this.ctx.model.Project.findOne({
       where,
     });
     const page = JSON.parse(project.pageConfig)
