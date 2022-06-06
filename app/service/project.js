@@ -4,7 +4,7 @@ const download = require('download-git-repo');
 const utils = require('../utils/fileUtils');
 const fs = require('fs');
 const process = require('child_process');
-const octokit = new Octokit({ auth: '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' });
+const octokit = new Octokit({ auth: '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' });
 
 function downloadFunc(downloadRepoUrl, temp_dest) {
   return new Promise(async (resolve, reject) => {
@@ -75,16 +75,20 @@ class ProjectService extends Service {
     // todo 判断是否已经存在项目，存在则不创建
     // coco-h5 替换成创建的 organizations name
     console.log('server-createProject:', config)
-    const { data: { id, ssh_url } } = await octokit.request('POST /orgs/justdoit-h5/repos', {
-      org: 'justdoit-h5',
-      name: config.name
-    });
-    console.log('ssh_url:', ssh_url)
-    await renderTpl({
-      ...config,
-      repoUrl: ssh_url
-    });
-    return { id, ssh_url }
+    try {
+      const { data: { id, ssh_url } } = await octokit.request('POST /orgs/justdoit-h5/repos', {
+        org: 'justdoit-h5',
+        name: config.name
+      });
+      console.log('ssh_url:', ssh_url)
+      await renderTpl({
+        ...config,
+        repoUrl: ssh_url
+      });
+      return { id, ssh_url }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
 }
